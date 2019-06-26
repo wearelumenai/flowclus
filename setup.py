@@ -8,13 +8,10 @@ setup(
     license='',
     author='',
     author_email='',
-    package_requires = [
-        'requests',
+    install_requires = [
         'bottle',
-        'Cython',
-        'numpy',
-        'scipy',
-        'POT',
+        'requests',
+	'POT'
     ],
     description=''
 )
