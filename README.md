@@ -109,6 +109,7 @@ The data processed by an instance of the `OC` class in the `oc` module :
  [distclus4py README.md](https://github.com/wearelumenai/distclus4py)).
  Then it uses an `Assembly` to map the current result to known clusters
  and compute size of each clusters (some old known clusters may be empty).
+ Eventually it returns a result that can be used by the dataviz server.
  
 ## Result serving
 
@@ -122,7 +123,7 @@ single result with a unique result_id`
 # Conclusion
 
 At time of writing, the `assembly` module contains less than 45 lines of code and the
-`oc` module contains less than 75 lines of code.
+`oc` module contains less than 75 lines of code (commentaries are excluded).
  - this is enough to build an online clustering and dataviz application
  - most of it is reusable !
  

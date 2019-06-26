@@ -3,10 +3,19 @@ import ot
 
 
 class Assembly:
+    """
+    Keep track of known points and coalesce new ones
+    """
     def __init__(self):
         self.points = np.empty((0,))
 
     def coalesce(self, points):
+        """
+        Coalesce the given points to the known points and compute a mapping
+        between them.
+        :param points: new points
+        :return: new to known points mappings
+        """
         if len(self.points) == 0:
             self.points = np.copy(points)
             return np.arange(len(points))
@@ -20,6 +29,7 @@ class Assembly:
             return labels
 
     def _match_longer(self, longer):
+        """compute mapping if new points are more than known points"""
         M, closest, farthest = _dist_closest(longer, self.points)
         G = ot.emd([], [], M[closest])
         result = np.empty((len(longer, )), dtype=int)
@@ -28,6 +38,7 @@ class Assembly:
         return result
 
     def _match_shorter(self, shorter):
+        """compute mapping if new points are less than known points"""
         M, known, _ = _dist_closest(self.points, shorter)
         G = ot.emd([], [], M[known])
         result = np.empty((len(shorter, )), dtype=int)
@@ -36,6 +47,7 @@ class Assembly:
 
 
 def _dist_closest(longer, shorter):
+    """compute distance matrix, closest and farthest points"""
     M = ot.dist(longer, shorter)
     d = np.amin(M, axis=1)
     s = np.argsort(d)

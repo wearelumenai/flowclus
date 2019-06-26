@@ -7,22 +7,45 @@ from assembly import Assembly
 
 
 class OC:
+    """Wraps a mini batch MCMC algorithm"""
     def __init__(self):
+        """
+        Build a new OC instance
+        """
         self.ass = Assembly()
         self.algo = Batch(MCMC, init_k=1, b=1, amp=.2, mcmc_iter=100)
         self.frame = deque([], 60)
 
     def push_predict(self, chunk):
+        """
+        push and predict data from the dataflow
+        :param chunk: a chunk of data
+        :return: the result that can be send to the dataviz server
+        """
         arr = self._extend(chunk)
         self.algo.push(arr)
         centroids, labels = self.algo.predict_online(arr)
         return self._make_result(centroids, labels, chunk['columns'])
 
     def _extend(self, chunk):
+        """
+        keep the given chunk in the fixed size frame. Old data can be reused
+        if the chunk is smaller than the frame.
+        :param chunk: the chunk from the dataflow
+        :return: the content of the frame as a ndarray
+        """
         self.frame.extend(chunk['points'])
         return np.array(self.frame)
 
     def _make_result(self, centroids, labels, columns):
+        """
+        Build a result ready for the dataviz server. The result contains
+        all known centers, even if empty for the current centroids
+        :param centroids: the current centroids
+        :param labels: the labels for the data in the frame
+        :param columns: the column names
+        :return: the result ready fo the dataviz server
+        """
         indices = self.ass.coalesce(centroids)
         counts = np.zeros(len(self.ass.points))
         counts[indices] = np.bincount(labels)
@@ -33,4 +56,5 @@ class OC:
         }
 
     def run(self):
+        """Run the underlying algorithm"""
         return self.algo.run()
