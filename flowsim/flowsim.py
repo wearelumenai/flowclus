@@ -1,22 +1,22 @@
 from datetime import timedelta, datetime
 from itertools import chain
-from random import randint, uniform, seed, Random
+from random import Random
 
 
-def _make_event(start, gen):
+def _make_event(start, seconds, gen):
     return {
-        'ts': start + timedelta(minutes=gen.uniform(0, 60)),
+        'ts': start + timedelta(seconds=gen.uniform(0, seconds)),
         'value': draw_value(gen)
     }
 
 
 def draw_value(gen):
-    lorem = draw_mix([1, 10], [.5, .5], gen)
-    ipsum = draw_mix([1, 6], [.6, .4], gen)
+    lorem = draw_mix([9, 12], [.5, .5], gen)
+    ipsum = draw_mix([9, 16], [.6, .4], gen)
     dolor = draw_mix([2, 5], [.3, .7], gen)
-    sit = draw_mix([5, 11], [.5, .5], gen)
+    sit = draw_mix([7, 9], [.5, .5], gen)
     amet = draw_mix([15, 17], [.5, .5], gen)
-    consectetur = draw_mix([1, 12], [.5, .5], gen)
+    consectetur = draw_mix([1, 2], [.5, .5], gen)
     return {
         'lorem': gen.uniform(0, lorem),
         'ipsum': gen.uniform(0, ipsum),
@@ -37,22 +37,22 @@ def draw_mix(values, probas, gen):
 
 
 def simulate(start, stop):
-    start_hour = start.replace(minute=0, second=0, microsecond=0)
-    events = chain(simulate_hours(start_hour, stop))
-    return (ev for ev in events if start <= ev['ts'] <= stop)
+    start_minute = start.replace(second=0, microsecond=0)
+    events = chain(simulate_minutes(start_minute, stop))
+    return (ev for ev in events if start < ev['ts'] <= stop)
 
 
-def simulate_hours(start_hour, stop):
-    while start_hour < stop:
-        yield from simulate_hour(start_hour)
-        start_hour += timedelta(hours=1)
+def simulate_minutes(start_minute, stop):
+    while start_minute < stop:
+        yield from simulate_minute(start_minute)
+        start_minute += timedelta(minutes=1)
 
 
-def simulate_hour(start):
+def simulate_minute(start):
     gen = Random()
     gen.seed(unix(start))
-    n = gen.randint(12, 15)
-    events = (_make_event(start, gen) for _ in range(n))
+    n = gen.randint(280, 320)
+    events = (_make_event(start, 60, gen) for _ in range(n))
     return sorted(events, key=lambda event: event['ts'])
 
 
