@@ -55,7 +55,7 @@ Now visit this page to see the live results :
 http://localhost:8081/bubbles?result_id=batch_tutorial
 
 Which will display something like :
-[bubbles](./oc.gif)
+![bubbles](./oc.gif)
 
 # How it works
 
