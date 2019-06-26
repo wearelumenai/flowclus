@@ -45,4 +45,14 @@ Now you should be able to get data points :
 $ curl -XGET 'http://localhost:8080/points?start=2019-06-26T15:39&stop=2019-06-26T15:40'
 ```
 
+If every thing goes well, start the clustering and visualization service :
+
+```
+$ python -m oc
+```
+
+Now visit this page to see the live results :
 http://localhost:8081/bubbles?result_id=batch_tutorial
+
+Which will display something like :
+![bubbles](./oc.gif)
