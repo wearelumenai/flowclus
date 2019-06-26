@@ -9,7 +9,7 @@ from assembly import Assembly
 class OC:
     def __init__(self):
         self.ass = Assembly()
-        self.algo = Batch(MCMC, init_k=4, b=1, amp=1, mcmc_iter=100)
+        self.algo = Batch(MCMC, init_k=1, b=1, amp=.2, mcmc_iter=100)
         self.frame = deque([], 60)
 
     def push_predict(self, chunk):

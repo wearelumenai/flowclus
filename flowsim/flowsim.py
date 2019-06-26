@@ -11,19 +11,13 @@ def _make_event(start, seconds, gen):
 
 
 def draw_value(gen):
-    lorem = draw_mix([9, 12], [.5, .5], gen)
-    ipsum = draw_mix([9, 16], [.6, .4], gen)
-    dolor = draw_mix([2, 5], [.3, .7], gen)
-    sit = draw_mix([7, 9], [.5, .5], gen)
-    amet = draw_mix([15, 17], [.5, .5], gen)
-    consectetur = draw_mix([1, 2], [.5, .5], gen)
+    lorem = draw_mix([(3, 5), (6, 9)], [.5, .5], gen)
+    ipsum = draw_mix([(5, 6), (7, 9)], [.6, .4], gen)
+    dolor = draw_mix([(0, 4), (1, 5)], [.3, .7], gen)
     return {
-        'lorem': gen.uniform(0, lorem),
-        'ipsum': gen.uniform(0, ipsum),
-        'dolor': gen.uniform(0, dolor),
-        'sit': gen.uniform(0, sit),
-        'amet': gen.uniform(0, amet),
-        'consectetur': gen.uniform(0, consectetur)
+        'lorem': gen.uniform(*lorem),
+        'ipsum': gen.uniform(*ipsum),
+        'dolor': gen.uniform(*dolor),
     }
 
 
