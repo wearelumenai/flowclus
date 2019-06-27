@@ -49,5 +49,5 @@ def get_param(param, default):
     return stop
 
 
-def run(host='localhost', port='8080'):
-    bottle.run(host=host, port=port)
+def run(host='localhost', port='8080', quiet=False):
+    bottle.run(host=host, port=port, quiet=quiet)
