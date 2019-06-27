@@ -90,7 +90,7 @@ This is implemented in the `assembly` package by the `Assembly` class :
  
  The dataflow delivers data thanks to its REST API. Data are formatted like
  this :
- ```json
+ ```
 {
     'ts': [...],
     'points': [[...], [...], ...],
