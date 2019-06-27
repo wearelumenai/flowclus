@@ -1,6 +1,6 @@
-import signal
 import time
 from datetime import datetime, timedelta
+from threading import Thread
 
 from bubbles import Server
 from bubbles.singletondriver import SingletonDriver
@@ -35,11 +35,21 @@ def run(model, get_chunk, drserv, every=2):
     :param every: polling time
     """
     driver, server = drserv
-    with model.run():
-        for points, columns in get_data(get_chunk, every):
-            result = model.push_predict(points, columns)
-            driver.put_result(result)
-    server.wait()
+
+    def proc():
+        with model.run():
+            for points, columns in get_data(get_chunk, every):
+                result = model.push_predict(points, columns)
+                driver.put_result(result)
+
+    t = Thread(target=proc)
+    t.daemon = True
+    t.start()
+    try:
+        t.join()
+        server.join()
+    except KeyboardInterrupt:
+        pass
 
 
 def get_data(get_chunk, every):
@@ -50,18 +60,10 @@ def get_data(get_chunk, every):
     :param every: polling time
     :return: a generator of (points, column names) tuples
     """
-    loop = True
-
-    def terminate(signum, frame):
-        nonlocal loop
-        loop = False
-
-    signal.signal(signal.SIGINT, terminate)
-
     start = datetime.now() - timedelta(seconds=every)
     stop = datetime.now()
     yield from get_chunk(start, stop)
-    while loop:
+    while True:
         time.sleep(every)
         start = stop
         stop = datetime.now()
