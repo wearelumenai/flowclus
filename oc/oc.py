@@ -8,33 +8,36 @@ from assembly import Assembly
 
 class OC:
     """Wraps a mini batch MCMC algorithm"""
-    def __init__(self):
+    def __init__(self, **kwargs):
         """
         Build a new OC instance
         """
+        frame_size = kwargs.get('frame_size', 100)
+        self.frame = deque([], frame_size)
+        del kwargs['frame_size']
+        self.algo = Batch(MCMC, **kwargs)
         self.ass = Assembly()
-        self.algo = Batch(MCMC, init_k=1, b=1, amp=.2, mcmc_iter=100)
-        self.frame = deque([], 60)
 
-    def push_predict(self, chunk):
+    def push_predict(self, points, columns):
         """
         push and predict data from the dataflow
-        :param chunk: a chunk of data
+        :param points: a chunk of data
+        :param columns: the column names
         :return: the result that can be send to the dataviz server
         """
-        arr = self._extend(chunk)
+        arr = self._extend(points)
         self.algo.push(arr)
         centroids, labels = self.algo.predict_online(arr)
-        return self._make_result(centroids, labels, chunk['columns'])
+        return self._make_result(centroids, labels, columns)
 
-    def _extend(self, chunk):
+    def _extend(self, points):
         """
         keep the given chunk in the fixed size frame. Old data can be reused
         if the chunk is smaller than the frame.
-        :param chunk: the chunk from the dataflow
+        :param points: a chunk of data
         :return: the content of the frame as a ndarray
         """
-        self.frame.extend(chunk['points'])
+        self.frame.extend(points)
         return np.array(self.frame)
 
     def _make_result(self, centroids, labels, columns):
