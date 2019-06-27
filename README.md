@@ -81,7 +81,7 @@ clusters.
    The other clusters have appeared or disappeared depending on the result
    which was the longest (current or known).
    
-This is implemented in the `assembly` module by the `Assembly` class :
+This is implemented in the `assembly` package by the `Assembly` class :
  - method `coalesce` takes the current result and returns labels corresponding
  to the best known clusters.
  - attribute `points` gives all known clusters.
@@ -102,7 +102,8 @@ where:
  - `points`: the points matrix (each point has 3 dimensions)
  - `columns`: dimension names (columns of the `points matrix)
  
-The data processed by an instance of the `OC` class in the `oc` module :
+The data processed by an instance of the `OC` class in the `oc.py` module
+ of the `oc` package :
  - method `push_predict` takes data from the dataflow and use a mini-batch
  algorithm to evolve the clustering result
  (refer to
@@ -113,12 +114,47 @@ The data processed by an instance of the `OC` class in the `oc` module :
  
 ## Result serving
 
-Data are fetched every 2 seconds by the `get_data()` function.
-Then it is processed by the `OC` instance and the embedded dataviz
-server is updated thanks to a `SingletonDriver` that stores a
-single result with a unique result_id`
-(refer to
+The dataviz server is set up and started by the `start_server`
+method in the `server.py` module of the `oc` package. It takes the following
+optional parameters :
+ - `host`: the host that the server listens for
+ - `port`: the port that the server listens on
+ - `result_id`: the identifier used to store and get the results
+ It returns a `SingletonDriver` used to store the results (refer to
  [bubbles4py README.md](https://github.com/wearelumenai/bubbles4py)).
+
+Once started, the server is fed by `run` method in the `server.py` module
+of the `oc` package. It takes the following parameters :
+ - `model`: the `OC` instance responsible for cluster computing
+ - `get_chunk`: a function that returns points between 2 instants
+ - `driver`: an instance of `SingletonDriver` returned by `start_server`
+ - `every`: polling time between data flow query
+The `run` method push new chunks of data into the `OC` model and send 
+clustering to the dataviz server. It delegates data flow polling to the
+`get_data` function.
+
+The `get_chunk` function is declared in the `data.py` module of the `oc`
+package. For the demo, it is actually defined in the `client.py` module
+of the `flowsim` package. 
+
+# Reusable components and customization
+
+The following components may be reused for any data flow.
+
+package    | module       | component      | type       | description
+---------- | ------------ | -------------- | ---------- | -----------
+`assembly` | `ass.py`     | `Assembly`     | class      | coalesces and maps new and historical results with OT
+`oc`       | `oc.py`      | `OC`           | class      | process mini batches from the data flow and build clustering results
+`oc`       | `server.py`  | `start_server` | function   | start the dataviz server
+`oc`       | `server.py`  | `run`          | function   | feed the server with clustering result computed from the data flow
+`oc`       | `server.py`  | `get_data`     | function   | poll the data flow
+ 
+ 
+ The following components must be customized for each data flow.
+
+package    | module       | component      | type       | description
+---------- | ------------ | -------------- | ---------- | -----------
+`oc`       | `data.py`    | `get_chunk`    | function   | get a chunk of data flow
  
 # Conclusion
 

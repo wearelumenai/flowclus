@@ -1,1 +1,1 @@
-from .assembly import Assembly
+from .ass import Assembly

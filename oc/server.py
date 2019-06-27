@@ -5,22 +5,21 @@ from bubbles import Server
 from bubbles.singletondriver import SingletonDriver
 
 
-def get_data(get_chunk, every):
+def start_server(host='localhost', port=8081, result_id='batch_tutorial'):
     """
-    A generator that fetch new chunks each 2 seconds
-    :param get_chunk: a method that takes two instants and returns
-    points between them
-    :param every: polling time
-    :return: a generator of (points, column names) tuples
+    Starts the dataviz server
+    :param host: the host that the server listens for
+    :param port: the port that the server listens on
+    :param result_id: the identifier used to store and get the results
+    :return: a SingletonDriver that backends the server
     """
-    start = datetime.now() - timedelta(seconds=every)
-    stop = datetime.now()
-    yield from get_chunk(start, stop)
-    while True:
-        time.sleep(every)
-        start = stop
-        stop = datetime.now()
-        yield from get_chunk(start, stop)
+    driver = SingletonDriver(result_id)
+    server = Server(driver)
+    server.start(host=host, port=port, quiet=True)
+    print('visit http://{}:{}/bubbles?result_id={}'.format(
+        host, port, result_id
+    ))
+    return driver
 
 
 def run(model, get_chunk, driver, every=2):
@@ -38,18 +37,19 @@ def run(model, get_chunk, driver, every=2):
             driver.put_result(result)
 
 
-def start_server(host='localhost', port=8081, result_id='batch_tutorial'):
+def get_data(get_chunk, every):
     """
-    Starts the dataviz server
-    :param host: the host that the server listens for
-    :param port: the port that the server listens on
-    :param result_id: the identifier used to store and get the results
-    :return: a SingletonDriver that backends the server
+    A generator that fetch new chunks each 2 seconds
+    :param get_chunk: a method that takes two instants and returns
+    points between them
+    :param every: polling time
+    :return: a generator of (points, column names) tuples
     """
-    driver = SingletonDriver(result_id)
-    server = Server(driver)
-    server.start(host=host, port=port, quiet=True)
-    print('visit http://{}:{}/bubbles?result_id={}'.format(
-        host, port, result_id
-    ))
-    return driver
+    start = datetime.now() - timedelta(seconds=every)
+    stop = datetime.now()
+    yield from get_chunk(start, stop)
+    while True:
+        time.sleep(every)
+        start = stop
+        stop = datetime.now()
+        yield from get_chunk(start, stop)
