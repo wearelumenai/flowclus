@@ -9,7 +9,7 @@ and
 in order to modelize a data flow online.
 
 # requirements
-This demo needs Python 3.7 to run. It is recommended to use a virtualenv.
+This demo needs Python 3.5 to run. It is recommended to use a virtualenv.
 
 # Build ans install the components
 First you need to properly install the two libraries :

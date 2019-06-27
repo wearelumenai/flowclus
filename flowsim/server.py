@@ -42,7 +42,8 @@ def get_point(ev, columns):
 
 def get_param(param, default):
     if param in bottle.request.query:
-        stop = datetime.fromisoformat(bottle.request.query[param])
+        stop = datetime.strptime(bottle.request.query[param]
+                                 , '%Y-%m-%dT%H:%M:%S.%f')
     else:
         stop = default
     return stop
