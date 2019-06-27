@@ -42,7 +42,7 @@ $ python -m flowsim &
 Now you should be able to get data points :
 
 ```
-$ curl -XGET 'http://localhost:8080/points?start=2019-06-26T15:39&stop=2019-06-26T15:40'
+$ curl -XGET 'http://localhost:8080/points?start=2019-06-26T15:39:00.000000&stop=2019-06-26T15:40:00.000000'
 ```
 
 If every thing goes well, start the clustering and visualization service :
