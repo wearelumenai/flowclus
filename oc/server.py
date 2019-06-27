@@ -48,8 +48,8 @@ def run(model, get_chunk, drserv, every=2):
     t.daemon = True
     t.start()
     try:
-        t.join()
         server.join()
+        t.join()
     except KeyboardInterrupt:
         pass
 
