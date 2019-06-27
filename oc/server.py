@@ -1,3 +1,4 @@
+import signal
 import time
 from datetime import datetime, timedelta
 
@@ -11,30 +12,34 @@ def start_server(host='localhost', port=8081, result_id='batch_tutorial'):
     :param host: the host that the server listens for
     :param port: the port that the server listens on
     :param result_id: the identifier used to store and get the results
-    :return: a SingletonDriver that backends the server
+    :return: a tuple of the SingletonDriver that stores the results
+    and the server
     """
     driver = SingletonDriver(result_id)
     server = Server(driver)
-    server.start(host=host, port=port, quiet=True)
+    server.start(host=host, port=port, quiet=False)
     print('visit http://{}:{}/bubbles?result_id={}'.format(
         host, port, result_id
     ))
-    return driver
+    return driver, server
 
 
-def run(model, get_chunk, driver, every=2):
+def run(model, get_chunk, drserv, every=2):
     """
     Run the clustering and dataviz server
     :param model: the OC instance that manage cluster computing
     :param get_chunk: a method that takes two instants and returns
     points between them
-    :param driver: the SingletonDriver that stores the results
+    :param drserv: a tuple of the SingletonDriver that stores the results and
+    the dataviz server
     :param every: polling time
     """
+    driver, server = drserv
     with model.run():
         for points, columns in get_data(get_chunk, every):
             result = model.push_predict(points, columns)
             driver.put_result(result)
+    server.wait()
 
 
 def get_data(get_chunk, every):
@@ -45,10 +50,18 @@ def get_data(get_chunk, every):
     :param every: polling time
     :return: a generator of (points, column names) tuples
     """
+    loop = True
+
+    def terminate(signum, frame):
+        nonlocal loop
+        loop = False
+
+    signal.signal(signal.SIGINT, terminate)
+
     start = datetime.now() - timedelta(seconds=every)
     stop = datetime.now()
     yield from get_chunk(start, stop)
-    while True:
+    while loop:
         time.sleep(every)
         start = stop
         stop = datetime.now()

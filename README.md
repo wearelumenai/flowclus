@@ -52,7 +52,7 @@ $ python -m oc
 ```
 
 Now visit this page to see the live results :
-http://localhost:8081/bubbles?result_id=batch_tutorial
+http://localhost:32211/bubbles?result_id=batch_tutorial
 
 Which will display something like :
 ![bubbles](./oc.gif)
