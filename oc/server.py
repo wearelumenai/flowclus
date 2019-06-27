@@ -6,18 +6,20 @@ from bubbles import Server
 from bubbles.singletondriver import SingletonDriver
 
 
-def start_server(host='localhost', port=8081, result_id='batch_tutorial'):
+def start_server(host='localhost', port=8081, result_id='batch_tutorial',
+                 quiet=True):
     """
     Starts the dataviz server
     :param host: the host that the server listens for
     :param port: the port that the server listens on
     :param result_id: the identifier used to store and get the results
+    :param quiet: runs the server in quiet mode
     :return: a tuple of the SingletonDriver that stores the results
     and the server
     """
     driver = SingletonDriver(result_id)
     server = Server(driver)
-    server.start(host=host, port=port, quiet=False)
+    server.start(host=host, port=port, quiet=quiet)
     print('visit http://{}:{}/bubbles?result_id={}'.format(
         host, port, result_id
     ))
