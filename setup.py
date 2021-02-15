@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='flowclus',
-    version='',
+    version='1.0.0',
     packages=['oc', 'flowsim', 'assembly'],
     url='',
     license='',
@@ -11,7 +11,7 @@ setup(
     install_requires = [
         'bottle',
         'requests',
-	'POT'
+	    'POT'
     ],
     description=''
 )
