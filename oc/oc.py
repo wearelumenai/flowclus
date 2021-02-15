@@ -27,7 +27,7 @@ class OC:
         """
         arr = self._extend(points)
         self.algo.push(arr)
-        centroids, labels = self.algo.predict_online(arr)
+        centroids, labels = self.algo.predict(arr)
         return self._make_result(centroids, labels, columns)
 
     def _extend(self, points):
