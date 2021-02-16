@@ -11,7 +11,8 @@ setup(
     install_requires = [
         'bottle',
         'requests',
-	    'POT'
+	    'POT',
+        'sklearn'
     ],
     description=''
 )

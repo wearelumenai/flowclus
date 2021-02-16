@@ -3,7 +3,10 @@ from datetime import datetime, timedelta
 
 import bottle
 
-from flowsim.flowsim import simulate, unix
+try:
+    from flowsim.flowsim_sklearn import simulate, unix
+except:
+    from flowsim.flowsim import simulate, unix
 
 
 @bottle.route('/points')
