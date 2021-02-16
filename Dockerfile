@@ -9,6 +9,8 @@ RUN wget https://golang.org/dl/go1.13.15.linux-amd64.tar.gz &&\
     tar -C /usr/local -xzf go1.13.15.linux-amd64.tar.gz
 ENV PATH="/usr/local/go/bin:${PATH}"
 
+WORKDIR /workspace
+
 RUN git clone --depth 1 https://github.com/wearelumenai/distclus4py.git &&\
     cd distclus4py &&\
     make build &&\
@@ -19,11 +21,11 @@ RUN git clone --depth 1 https://github.com/wearelumenai/bubbles4py.git &&\
     python setup.py install &&\
     cd ..
 
-RUN git clone --depth 1 --single-branch --branch feature https://github.com/wearelumenai/flowclus.git &&\
-    cd flowclus &&\
-    python setup.py install &&\
+WORKDIR flowclus
+COPY . .
+RUN python setup.py install &&\
     cd ..
 
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh ./entrypoint.sh
 EXPOSE 8080 32211 32210
-CMD sh /entrypoint.sh
+CMD sh ./entrypoint.sh
