@@ -3,7 +3,7 @@ FROM continuumio/miniconda3
 RUN apt-get update &&\
     apt-get install -y wget git make gcc vim curl
 
-RUN pip install Cython numpy scipy
+RUN pip install Cython numpy scipy jupyterlab
 
 RUN wget https://golang.org/dl/go1.13.15.linux-amd64.tar.gz &&\
     tar -C /usr/local -xzf go1.13.15.linux-amd64.tar.gz
@@ -27,5 +27,7 @@ RUN python setup.py install &&\
     cd ..
 
 COPY entrypoint.sh ./entrypoint.sh
-EXPOSE 8080 32211 32210
+COPY jupyter_notebook_config.py jupyter_notebook_config.py
+
+EXPOSE 8080 32211 32210 8888
 CMD sh ./entrypoint.sh

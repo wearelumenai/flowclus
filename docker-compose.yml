@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  demo_distclus:
+    image: demo_distclus:2.1.0
+    container_name: DEMO_DISTCLUS
+    build: .
+    ports:
+      - 32211:32211
+      - 32210:32210
+      - 8888:8888
+      - 8080:8080
